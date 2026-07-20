@@ -6,7 +6,7 @@
 
   <title>A Tiny Question 💌</title>
 
-  <!-- Cute handwritten + clean fonts hello -->
+  <!-- Cute handwritten + clean fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -162,10 +162,11 @@
 
     .btn-group {
       display: flex;
-      gap: 15px;
+      gap: 12px;
       justify-content: center;
       align-items: center;
       margin-top: 30px;
+      flex-wrap: wrap;
     }
 
     .main-btn {
@@ -189,18 +190,19 @@
       transform: scale(0.97);
     }
 
-    .secondary-btn {
+    .secondary-btn-small {
       border: 1.5px solid #eadce2;
-      padding: 15px 28px;
+      padding: 10px 18px;
       border-radius: 999px;
       background: white;
       color: var(--muted);
-      font-weight: 700;
+      font-size: 0.82rem;
+      font-weight: 600;
       cursor: pointer;
       transition: transform 0.2s ease, background 0.2s ease;
     }
 
-    .secondary-btn:hover {
+    .secondary-btn-small:hover {
       background: #fcf4f7;
       transform: translateY(-2px);
     }
@@ -331,7 +333,7 @@
       pointer-events: auto;
     }
 
-    /* TOAST POPUP MESSAGE */
+    /* TOAST POPUP MESSAGE (Screen 4) */
     .toast-popup {
       position: fixed;
       bottom: -100px;
@@ -355,6 +357,52 @@
     .toast-popup.show {
       bottom: 30px;
       opacity: 1;
+    }
+
+    /* CENTER MODAL WITH BLUR (Screen 5) */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(63, 45, 54, 0.45);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: white;
+      padding: 36px 30px;
+      border-radius: 28px;
+      text-align: center;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.25);
+      transform: scale(0.85);
+      transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-width: 420px;
+      width: 100%;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-text {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.5;
+      margin-bottom: 22px;
     }
 
     /* FINAL SCREEN */
@@ -555,7 +603,7 @@
         </h2>
 
         <p class="subtitle">
-          Pick your preferred cuisine for our date! Everything else will be taken care of...
+          Pick your preferred cuisine for our date!
         </p>
 
         <div class="choice-grid">
@@ -655,8 +703,11 @@
           </div>
 
           <div class="btn-group" style="margin-top: 25px;">
-            <button class="secondary-btn" onclick="goToScreen(4)">
-              ← Change Cuisine
+            <button class="main-btn" onclick="openExcitedModal()">
+              I'm excited!! ✨
+            </button>
+            <button class="secondary-btn-small" onclick="goToScreen(4)">
+              No wait, I changed my mind
             </button>
           </div>
         </div>
@@ -665,9 +716,21 @@
 
   </div>
 
-  <!-- Toast Popup Message -->
+  <!-- Toast Popup Message (Screen 4) -->
   <div id="toast" class="toast-popup">
     How about a chocolate ice cream after that? 🍨😉
+  </div>
+
+  <!-- Center Blurred Modal (Screen 5) -->
+  <div id="excitedModal" class="modal-overlay" onclick="closeExcitedModal(event)">
+    <div class="modal-card">
+      <div class="modal-text">
+        Yo tambien estoy emocionado ❤️
+      </div>
+      <button class="main-btn" onclick="closeExcitedModal(null)">
+        Aww 💗
+      </button>
+    </div>
   </div>
 
   <script>
@@ -675,7 +738,7 @@
     let selectedExperience = "";
     
     // REPLACE THIS WITH YOUR FORMSPREE FORM ID (e.g., "xvgpqwbz")
-    const FORMSPREE_ID = "mlgqnpjn";
+    const FORMSPREE_ID = "YOUR_FORMSPREE_ID";
 
     /* NAVIGATION */
     function goToScreen(screenNumber) {
@@ -765,12 +828,12 @@
       clearTimeout(toastTimeout);
       toastTimeout = setTimeout(() => {
         toast.classList.remove("show");
-      }, 7000); // Popup stays for 7 seconds
+      }, 10000);
     }
 
     /* SEND SELECTION TO YOUR EMAIL */
     function sendEmailNotification(choice) {
-      if (!FORMSPREE_ID || FORMSPREE_ID === "mlgqnpjn") return;
+      if (!FORMSPREE_ID || FORMSPREE_ID === "YOUR_FORMSPREE_ID") return;
 
       fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
         method: "POST",
@@ -792,7 +855,6 @@
 
       document.getElementById("finalExperience").textContent = selectedExperience;
 
-      // Send the choice silently to your email
       sendEmailNotification(selectedExperience);
 
       goToScreen(5);
@@ -804,6 +866,17 @@
           origin: { y: 0.65 }
         });
       }, 400);
+    }
+
+    /* EXCITED MODAL FUNCS */
+    function openExcitedModal() {
+      document.getElementById("excitedModal").classList.add("active");
+    }
+
+    function closeExcitedModal(e) {
+      if (!e || e.target.id === "excitedModal") {
+        document.getElementById("excitedModal").classList.remove("active");
+      }
     }
   </script>
 
